@@ -673,12 +673,19 @@ def showPower(deviceList):
     print(logSpacer)
 
 
+def getRocmDriverVer():
+    (vermagic, _ ) = subprocess.Popen(['modinfo', 'amdgpu', '-F', 'vermagic'], stdout=subprocess.PIPE).communicate()
+    drvVer = re.search(b'(?<=rel-)[^\s]*', vermagic).group(0)
+    return drvVer.decode('utf-8')
+
+
 def showAllConcise(deviceList):
     """ Display critical info for all devices in a concise format.
 
     Parameters:
     deviceList -- List of all devices
     """
+    print("ROCm Driver Version: {}".format(getRocmDriverVer()))
     print(logSpacer)
     print(' GPU  DID    Temp     AvgPwr   SCLK     MCLK     Fan      Perf    OverDrive  ECC')
     for device in deviceList:
