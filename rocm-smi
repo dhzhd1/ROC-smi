@@ -202,7 +202,13 @@ def writeToSysfs(fsFile, fsValue):
 def listDevices():
     """ Return a list of GPU devices."""
     devicelist = [device for device in os.listdir(drmprefix) if re.match(r'^card\d+$', device)]
-    return devicelist
+    dev_list = []
+    for card in devicelist:
+        with open(os.path.join(drmprefix, card, 'device', 'vendor')) as f:
+            vendor_id = f.readline().strip()
+            if vendor_id == '0x1002':
+                dev_list.append(card)
+    return sorted(dev_list)
 
 
 def listAmdHwMons():
